@@ -37,7 +37,7 @@
 # Features
 
 > [!NOTE]
-> This niri configuration is up to date to: [niri v25.11](https://github.com/YaLTeR/niri/releases/tag/v25.11)
+> This configuration requires [niri v26.04](https://github.com/niri-wm/niri/releases/tag/v26.04) or newer.
 
 - Empower niri with waybar, fuzzel, dunst, swaylock, and more - A full experience!
 - Idle time and power profile picker available as waybar widgets and fuzzel menus
@@ -47,7 +47,7 @@
 
 # Installation on Fedora
 
-This port targets conventional, DNF-based Fedora with **niri 25.11 or newer**
+This port targets conventional, DNF-based Fedora with **niri 26.04 or newer**
 (Fedora 44 or newer recommended). Fedora Atomic desktops are not supported by
 this installer. Run as your normal desktop user:
 
@@ -98,28 +98,60 @@ Log out and choose **niri** from the login screen, or run `niri-session` from a
 TTY. Review `~/.config/niri/outputs.kdl` for your monitor layout. The supplied
 output names, resolution, and positions are examples from the original machine.
 
-Fedora-specific changes:
+## Original appearance and desktop extras
 
-- DNF handles the update widget and Super+U (RPM updates only, not Flatpaks or
-  Fedora release upgrades). Checks run every 30 minutes.
-- Standard `swaylock` uses a solid background; screenshot blur and clock effects
-  from `swaylock-effects` are not required. The logout menu uses the same locker.
-- `lxpolkit` handles authentication and `pavucontrol` provides audio controls.
-- Fedora's `tuned-ppd` supplies power-profile integration, unless
-  `power-profiles-daemon` is already installed.
-- Fuzzel selects wallpapers from `~/Pictures/wallpapers`; ImageMagick prepares
-  them and swaybg displays them in fill mode. The blurred overview backdrop is
-  optional: install `awww` and `awww-daemon` separately to enable it, then log in
-  again. Setup does not enable third-party repositories.
-- Noto and Font Awesome fonts are installed as fallbacks. Run `bash install-fonts.sh`
-  to install Ubuntu Mono Nerd Font for the bar and launcher, then press Super+W
-  twice to restart Waybar. The helper downloads Nerd Fonts v3.4.0 from upstream
-  GitHub into your user font directory; rollback leaves these fonts installed.
-  For the exact original
-  appearance, install Ubuntu Mono and JetBrains Mono from
-  [Nerd Fonts](https://www.nerdfonts.com/font-downloads). Some Nerd Font glyphs
-  require these fonts. Colloid themes/icons and shell customizations are optional
-  and are not installed by this script.
+After the base setup, run:
+
+```bash
+bash install-extras.sh --dry-run
+bash install-extras.sh
+```
+
+Run as your normal user; the installer asks sudo for Fedora build dependencies.
+It currently supports x86_64 and downloads pinned upstream sources. Builds can
+use several gigabytes of disk and take several minutes. It installs:
+
+- **swaylock-effects:** screenshot blur, vignette, clock, and date. The custom
+  binary uses the existing Fedora swaylock PAM configuration. Standard swaylock
+  remains available as a fallback.
+- **awww:** the blurred overview backdrop, with the existing swaybg workspace
+  wallpaper. Gum selects wallpapers and all five modes (stretch, fill, fit,
+  center, tile); the selected mode persists across logins.
+- **pwvucontrol:** the upstream-recommended Flatpak from Flathub. The bar opens
+  it when installed and otherwise falls back to pavucontrol.
+- **Fonts:** Ubuntu Mono Nerd Font, JetBrains Mono Nerd Font, Ubuntu Nerd Font,
+  and Noto Serif CJK fonts.
+- **Colloid-Grey-Dark and Colloid icons:** GTK3/GTK4 styling and desktop font
+  settings. GTK4 applications may vary in how they support custom styles.
+- **Zsh, Zinit, and Starship:** Alacritty opens Zsh; plugins provide suggestions,
+  highlighting, and FZF completion. The shell uses Fedora package commands and
+  a prompt matching the desktop palette. Zinit fetches plugins on first launch.
+  This is an adapted shell configuration, not a copy of the author's personal
+  aliases. Your login shell remains unchanged.
+
+The installer backs up the files and GSettings it changes in
+`~/.local/state/niri-extras-backup`. It preserves your monitor settings and
+wallpaper images. Repeated runs retain the first backup. To undo the extras:
+
+```bash
+bash install-extras.sh --rollback-dry-run
+bash install-extras.sh --rollback
+```
+
+Undo extras **before** running the base `rollback.sh`. Restored files and theme
+settings return to their pre-extras state. RPMs, Flatpak apps, and downloaded
+Zinit plugins remain installed. Files replaced during rollback are archived.
+
+For Firefox, visit [Dark space](https://addons.mozilla.org/firefox/addon/nicothin-space/)
+and click **Install Theme**, then confirm Firefox's prompt. This requires a
+browser interaction; the installer does not edit browser profile databases.
+Spotify/Spicetify are deliberately excluded from this port's extras installer.
+
+The base installer uses DNF updates, LXPolkit, and Fedora's tuned-ppd power-profile
+integration. The update widget covers RPMs, not Flatpaks or Fedora release
+upgrades. `install-extras.sh --skip-packages` skips DNF when its build dependencies
+are already installed. A normal base setup rerun restores the base configuration;
+rerun the extras installer afterward to reapply the extras.
 
 Package references: [Fedora niri](https://packages.fedoraproject.org/pkgs/niri/niri/),
 [Fedora swaylock](https://packages.fedoraproject.org/pkgs/swaylock/swaylock/), and
@@ -137,6 +169,20 @@ For the dotfiles of the following programs, please refer to [my dotfiles repo](h
 - `spicetify`
 - `starship`
 - `zsh`
+
+## Background blur
+
+Press **Super + Ctrl + B** to select Off, Low, Medium, or High. The default is
+Medium. This controls compositor blur behind Alacritty, Waybar, and Fuzzel;
+applications must have a transparent background for the effect to be visible.
+The Off preset also disables protocol-requested blur globally.
+
+The menu updates `~/.config/niri/blur.kdl`; niri reloads the setting immediately.
+For manual tuning, change `passes`, `offset`, `noise`, and `saturation` there.
+`xray true` blurs the wallpaper; `xray false` blurs the content behind the surface
+and costs more GPU work. Selecting a preset overwrites manual changes in that
+file. Lock-screen blur and the pre-blurred overview image are separate controls.
+See [niri's blur settings](https://niri-wm.github.io/niri/Configuration:-Miscellaneous.html#blur).
 
 # Keybindings
 

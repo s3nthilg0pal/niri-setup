@@ -1,0 +1,28 @@
+# Fedora adaptation of the original Zinit + Starship shell.
+export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/niri-extras/bin:$HOME/.local/bin:$PATH"
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+: "${XDG_STATE_HOME:=$HOME/.local/state}"
+mkdir -p "$XDG_CACHE_HOME/zsh" "$XDG_STATE_HOME/zsh"
+HISTFILE="$XDG_STATE_HOME/zsh/history"
+HISTSIZE=1000000
+SAVEHIST=1000000
+setopt append_history inc_append_history hist_ignore_dups hist_ignore_space
+autoload -Uz compinit
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+source "${XDG_DATA_HOME:-$HOME/.local/share}/niri-extras/zinit/zinit.zsh"
+zinit light zsh-users/zsh-autosuggestions
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light Aloxaf/fzf-tab
+export FZF_DEFAULT_OPTS='--color=fg:#d8dadd,bg:-1,hl:#B7D4ED --color=fg+:#d8dadd,bg+:-1,hl+:#BCC2C6 --color=info:#B2BCC4,prompt:#758A9B,pointer:#B7D4ED --layout=reverse'
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -l --icons --group-directories-first'
+alias wifi='nmtui connect'
+alias update='sudo dnf upgrade --refresh'
+alias pkgsearch='dnf search'
+pkglist() { rpm -qa | sort | fzf --preview 'rpm -qi {}'; }
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[3~' delete-char
+eval "$(starship init zsh)"

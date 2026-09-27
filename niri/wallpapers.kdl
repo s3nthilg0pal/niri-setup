@@ -1,6 +1,6 @@
 // awww is optional; the workspace wallpaper works with Fedora's swaybg.
 spawn-sh-at-startup "$NIRICONF/scripts/start-backdrop.sh"
-spawn-sh-at-startup "swaybg -i $NIRICONF/wallpapers/workspace.jpg -m fill -c '#010102'"
+spawn-sh-at-startup "$NIRICONF/scripts/start-wallpaper.sh"
 layer-rule {
     match namespace="^awww-daemon$"
     place-within-backdrop true

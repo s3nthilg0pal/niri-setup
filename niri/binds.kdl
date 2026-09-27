@@ -1,5 +1,6 @@
 binds {
     // Applications
+    Mod+Ctrl+B { spawn-sh "$NIRICONF/scripts/change-blur.sh"; }
     Mod+Return      { spawn-sh "alacritty --config-file $NIRICONF/alacritty/default.toml"; }
     Mod+Ctrl+Return { spawn-sh "fuzzel --config $NIRICONF/fuzzel/fuzzel.ini"; }
     Mod+B           { spawn-sh "firefox"; }

@@ -1,0 +1,17 @@
+add_newline = false
+palette = "niri"
+format = "$directory$git_branch$git_status$python$rust$nodejs$cmd_duration$line_break$character"
+[palettes.niri]
+foreground = "#d8dadd"
+blue = "#61768F"
+accent = "#B7D4ED"
+muted = "#758A9B"
+[directory]
+style = "bold accent"
+[git_branch]
+style = "muted"
+[git_status]
+style = "blue"
+[character]
+success_symbol = "[❯](accent)"
+error_symbol = "[❯](red)"

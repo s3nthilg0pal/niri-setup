@@ -1,0 +1,31 @@
+// Managed by change-blur.sh. Requires niri 26.04 or newer.
+// Xray blurs the wallpaper; use xray false below for the contents behind a window.
+blur {
+
+    passes 3
+    offset 3.0
+    noise 0.02
+    saturation 1.0
+}
+window-rule {
+    match app-id="^Alacritty$"
+    background-effect {
+        blur true
+        xray true
+    }
+}
+layer-rule {
+    match namespace="^waybar$"
+    background-effect {
+        blur true
+        xray true
+    }
+}
+layer-rule {
+    match namespace="^launcher$"
+    geometry-corner-radius 10
+    background-effect {
+        blur true
+        xray true
+    }
+}

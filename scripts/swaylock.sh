@@ -1,6 +1,15 @@
 #!/bin/bash
 niri msg action do-screen-transition --delay-ms 300
-exec swaylock \
+locker="${XDG_DATA_HOME:-$HOME/.local/share}/niri-extras/bin/swaylock-effects"
+effects=()
+if [[ -x $locker ]]; then
+  effects=(--clock --screenshots --indicator --effect-scale 0.4
+           --effect-vignette 0.2:0.5 --effect-blur 4x2
+           --datestr '%A, %b %d' --timestr '%k:%M')
+else
+  locker=swaylock
+fi
+exec "$locker" "${effects[@]}" \
   --color 0b0b0c \
   --daemonize \
   --ignore-empty-password \

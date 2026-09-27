@@ -41,7 +41,7 @@
     "format-bluetooth": "{icon}",
     "tooltip-format": "{desc} - {volume} %",
     "format-muted": " ",
-    "on-click": "pavucontrol",
+    "on-click": "$NIRICONF/scripts/audio-control.sh",
     "format-icons": {
       "headphone": " ",
       "default": [" ", " "],

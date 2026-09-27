@@ -1,13 +1,18 @@
 #!/bin/bash
 # Install the font used by Waybar and Fuzzel from the upstream Nerd Fonts release.
 set -euo pipefail
-font_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/niri-setup/UbuntuMono"
+fonts=("${@:-UbuntuMono}")
+for font in "${fonts[@]}"; do
+  case "$font" in UbuntuMono|JetBrainsMono|Ubuntu) ;; *) echo "Unsupported font: $font" >&2; exit 1 ;; esac
+done
 stage=$(mktemp -d)
 trap 'rm -rf -- "$stage"' EXIT
+for font in "${fonts[@]}"; do
+font_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/niri-setup/$font"
 curl --fail --location --retry 2 \
-  https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/UbuntuMono.zip \
-  --output "$stage/UbuntuMono.zip"
-python3 - "$stage/UbuntuMono.zip" "$font_dir" <<'PY'
+  "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/$font.zip" \
+  --output "$stage/$font.zip"
+python3 - "$stage/$font.zip" "$font_dir" <<'PY'
 from pathlib import Path
 import sys
 import zipfile
@@ -23,4 +28,5 @@ with zipfile.ZipFile(sys.argv[1]) as archive:
             (target / name).write_bytes(archive.read(entry))
 PY
 fc-cache -f "$font_dir"
-echo 'Ubuntu Mono Nerd Font installed. Restart Waybar (Super+W twice) to refresh icons.'
+done
+echo 'Fonts installed. Restart Waybar (Super+W twice) to refresh icons.'
