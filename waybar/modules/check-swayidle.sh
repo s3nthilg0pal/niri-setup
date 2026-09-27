@@ -1,5 +1,5 @@
 #!/bin/bash
-mode="$(cat $HOME/.local/state/idle-time)"
+mode="$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/idle-time")"
 case $mode in
   "5 minutes")
     printf '{"text": " 5m", "alt": "swayidle enabled", "tooltip": "swayidle enabled"}'

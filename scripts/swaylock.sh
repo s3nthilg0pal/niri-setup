@@ -1,18 +1,11 @@
 #!/bin/bash
 niri msg action do-screen-transition --delay-ms 300
-swaylock \
-  --clock \
-  --screenshots \
+exec swaylock \
+  --color 0b0b0c \
   --daemonize \
   --ignore-empty-password \
   --font "Ubuntu Bold" \
-  --indicator \
   --indicator-radius 150 \
-  --effect-scale 0.4 \
-  --effect-vignette 0.2:0.5 \
-  --effect-blur 4x2 \
-  --datestr "%A, %b %d" \
-  --timestr "%k:%M" \
   --key-hl-color 61768ff2 \
   --ring-color 61768ff2 \
   --text-color ffffffe6 \

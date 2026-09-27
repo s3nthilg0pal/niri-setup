@@ -20,6 +20,6 @@
 }
 {
     "label" : "lock",
-    "action" : "hyprlock",
+    "action" : "$NIRICONF/scripts/swaylock.sh",
     "text" : "lock"
 }

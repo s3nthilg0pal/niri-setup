@@ -1,10 +1,11 @@
 #!/bin/bash
+mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}"
 lock="$NIRICONF/scripts/swaylock.sh"
-if [ ! -f $HOME/.local/state/idle-time ]; then
+if [ ! -f ${XDG_STATE_HOME:-$HOME/.local/state}/idle-time ]; then
   # Default idle time
-  echo "10 minutes" >$HOME/.local/state/idle-time
+  echo "10 minutes" >${XDG_STATE_HOME:-$HOME/.local/state}/idle-time
 fi
-idle_time=$(cat $HOME/.local/state/idle-time)
+idle_time=$(cat ${XDG_STATE_HOME:-$HOME/.local/state}/idle-time)
 case $idle_time in
   "5 minutes")
     swayidle -w \

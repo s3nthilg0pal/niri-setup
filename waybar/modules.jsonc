@@ -30,11 +30,10 @@
     "escape": true,
     "return-type": "json",
     "exec": "$NIRICONF/waybar/modules/count-updates.sh",
-    "restart-interval": 60,
+    "restart-interval": 1800,
     "on-click": "alacritty --title Updater --config-file $NIRICONF/alacritty/float.toml -e $NIRICONF/waybar/modules/install-updates.sh",
   },
   "backlight": {
-    "device": "intel_backlight",
     "format": "󰃟  {percent}%",
   },
   "pulseaudio": {
@@ -42,7 +41,7 @@
     "format-bluetooth": "{icon}",
     "tooltip-format": "{desc} - {volume} %",
     "format-muted": " ",
-    "on-click": "pwvucontrol",
+    "on-click": "pavucontrol",
     "format-icons": {
       "headphone": " ",
       "default": [" ", " "],

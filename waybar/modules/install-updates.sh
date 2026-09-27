@@ -1,10 +1,10 @@
 #!/bin/bash
-figlet "Updates" -f slant -w 44 -c
-echo ""
-sleep 0.1
-
-paru
-
-echo ""
-echo "[INFO] OK"
-read -n 1 -s -r -p "[INFO] Press any key to finish..."
+sudo dnf upgrade --refresh
+status=$?
+if (( status == 0 )); then
+  echo '[INFO] Updates completed.'
+else
+  echo "[ERROR] Update failed (exit $status)."
+fi
+read -n 1 -s -r -p 'Press any key to finish...'
+exit "$status"

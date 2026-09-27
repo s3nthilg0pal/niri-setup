@@ -1,19 +1,19 @@
 - **Window Manager •** [niri](https://github.com/YaLTeR/niri)
 - **Launcher •** [Fuzzel](https://codeberg.org/dnkl/fuzzel)
 - **Panel •** [Waybar](https://github.com/Alexays/Waybar)
-- **Panel Font •** [Ubuntu Mono Nerd Font](https://archlinux.org/packages/extra/any/ttf-ubuntu-mono-nerd/) + [Noto Sans Mono CJK TC](https://archlinux.org/packages/extra/any/noto-fonts-cjk/)
+- **Panel Font •** [Ubuntu Mono Nerd Font](https://www.nerdfonts.com/font-downloads) + [Noto Sans Mono CJK TC](https://fonts.google.com/noto)
 - **Notification •** [dunst](https://github.com/dunst-project/dunst)
 - **Clipboard Manager •** [cliphist](https://github.com/sentriz/cliphist)
-- **Wallpaper Engine •** [swaybg](https://github.com/swaywm/swaybg) + [swww](https://github.com/LGFae/swww) (for overview)
+- **Wallpaper Engine •** [swaybg](https://github.com/swaywm/swaybg) + optional [awww](https://codeberg.org/LGFae/awww) (for overview)
 - **Idle Daemon •** [swayidle](https://github.com/swaywm/swayidle)
 - **Lock Screen •** [swaylock](https://github.com/swaywm/swaylock)
 - **Logout Menu •** [wlogout](https://github.com/ArtsyMacaw/wlogout)
-- **Fonts •** [Ubuntu](https://archlinux.org/packages/extra/any/ttf-ubuntu-font-family/) + [Noto Sans/Serif CJK TC](https://archlinux.org/packages/extra/any/noto-fonts-cjk/)
+- **Fonts •** [Ubuntu](https://design.ubuntu.com/font) + [Noto Sans/Serif CJK TC](https://fonts.google.com/noto)
 - **Theme •** [Colloid-gtk-theme](https://github.com/vinceliuice/Colloid-gtk-theme)
 - **Icons •** [Colloid-icon-theme](https://github.com/vinceliuice/Colloid-icon-theme)
 - **Cursor •** [Adwaita](https://github.com/GNOME/adwaita-icon-theme)
 - **Terminal •** [Alacritty](https://github.com/alacritty/alacritty)
-- **Terminal Font •** [JetBrains Mono Nerd Font](https://archlinux.org/packages/extra/any/ttf-jetbrains-mono-nerd/)
+- **Terminal Font •** [JetBrains Mono Nerd Font](https://www.nerdfonts.com/font-downloads)
 - **Shell •** [zsh](https://www.zsh.org/) + [zinit](https://github.com/zdharma-continuum/zinit) + [starship](https://github.com/starship/starship)
 - **Spicetify Theme •** [Ziro (Gray Dark)](https://github.com/spicetify/spicetify-themes/tree/master/Ziro#gray-dark)
 - **Firefox Theme •** [Dark space](https://addons.mozilla.org/en-US/firefox/addon/nicothin-space/)
@@ -45,18 +45,90 @@
 - A curated color palette smoothly applied across the setup
 - A clean and minimalistic UI you cannot resist to daily drive
 
-# Installation
+# Installation on Fedora
 
-```
-git clone https://github.com/acaibowlz/niri-setup.git
-cd niri-setup
+This port targets conventional, DNF-based Fedora with **niri 25.11 or newer**
+(Fedora 44 or newer recommended). Fedora Atomic desktops are not supported by
+this installer. Run as your normal desktop user:
+
+```bash
 ./setup.sh
 ```
 
-The script will install packages required for this setup and symlink to the corresponding directories. Make sure you have one of the AUR helpers installed.
+The script uses `sudo dnf install`, validates the configuration, copies it to
+`~/.config/niri-setup`, and links `~/.config/niri` to that copy. Existing setup
+and niri directories are backed up with timestamped `.backup-*` suffixes.
+`XDG_CONFIG_HOME` is respected. Configuration paths must not contain spaces or
+shell metacharacters. The checkout is left unchanged.
 
-> [!IMPORTANT]
-> The install script will only work on Arch Linux and its derivatives.
+Use `./setup.sh --skip-install` if dependencies are already installed. A failed
+package installation or validation stops setup before replacing your configuration.
+Rerunning setup replaces the installed copy, preserving it as a backup; edit
+`~/.config/niri-setup` for local customization.
+
+Preview setup without installing packages or writing configuration:
+
+```bash
+./dryrun.sh                     # equivalent to ./setup.sh --dry-run
+./dryrun.sh --skip-install      # preview configuration changes only
+```
+
+The preview prints planned actions; it does not resolve DNF dependencies or run
+configuration validation.
+
+To restore the configuration from before setup, run as your normal user:
+
+```bash
+./rollback.sh --dry-run         # inspect the restoration plan
+./rollback.sh                  # undo all recorded setup runs
+./rollback.sh --once            # alternatively, undo just the latest run
+```
+
+Rollback restores original directories or symlinks, including restoring their
+absence on a fresh installation. It archives replaced files in
+`~/.config/niri-rollback-*` and checks all required backups before changing files.
+Log out and select your previous desktop afterward. Installed RPMs and runtime
+state, such as the idle timer, are retained; this is a configuration rollback,
+not a system/package snapshot. Rollback uses metadata written by this version
+of setup. Older installations without `.rollback.json` require manual restoration
+from their `.backup-*` directories. Keep those backups until you no longer need
+rollback. `XDG_CONFIG_HOME` is respected by all three scripts.
+
+Log out and choose **niri** from the login screen, or run `niri-session` from a
+TTY. Review `~/.config/niri/outputs.kdl` for your monitor layout. The supplied
+output names, resolution, and positions are examples from the original machine.
+
+Fedora-specific changes:
+
+- DNF handles the update widget and Super+U (RPM updates only, not Flatpaks or
+  Fedora release upgrades). Checks run every 30 minutes.
+- Standard `swaylock` uses a solid background; screenshot blur and clock effects
+  from `swaylock-effects` are not required. The logout menu uses the same locker.
+- `lxpolkit` handles authentication and `pavucontrol` provides audio controls.
+- Fedora's `tuned-ppd` supplies power-profile integration, unless
+  `power-profiles-daemon` is already installed.
+- Fuzzel selects wallpapers from `~/Pictures/wallpapers`; ImageMagick prepares
+  them and swaybg displays them in fill mode. The blurred overview backdrop is
+  optional: install `awww` and `awww-daemon` separately to enable it, then log in
+  again. Setup does not enable third-party repositories.
+- Noto and Font Awesome fonts are installed as fallbacks. Run `bash install-fonts.sh`
+  to install Ubuntu Mono Nerd Font for the bar and launcher, then press Super+W
+  twice to restart Waybar. The helper downloads Nerd Fonts v3.4.0 from upstream
+  GitHub into your user font directory; rollback leaves these fonts installed.
+  For the exact original
+  appearance, install Ubuntu Mono and JetBrains Mono from
+  [Nerd Fonts](https://www.nerdfonts.com/font-downloads). Some Nerd Font glyphs
+  require these fonts. Colloid themes/icons and shell customizations are optional
+  and are not installed by this script.
+
+Package references: [Fedora niri](https://packages.fedoraproject.org/pkgs/niri/niri/),
+[Fedora swaylock](https://packages.fedoraproject.org/pkgs/swaylock/swaylock/), and
+[Fedora power-profile integration](https://fedoraproject.org/wiki/Changes/TunedAsTheDefaultPowerProfileManagementDaemon).
+
+Validation: shell syntax checks and `python3 -B -m unittest discover -s tests -v`
+cover installer backups, reruns, validation/package failures, and update status
+handling. The generated configuration also passes `niri validate` with Fedora's
+niri 26.04 package. A full graphical session has not been tested.
 
 For the dotfiles of the following programs, please refer to [my dotfiles repo](https://github.com/acaibowlz/dotfiles).
 
